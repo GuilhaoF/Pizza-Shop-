@@ -23,7 +23,7 @@ const data = [
 
 export function RevenueChart() {
   return (
-    <Card className="col-span-6 border border-gray-400 shadow-2xl">
+    <Card className="col-span-6 border border-red-500 shadow-xl">
       <CardHeader className="flex flex-row items-center justify-between pb-8">
         <div className="space-y-1">
           <CardTitle className="text-base font-medium">
