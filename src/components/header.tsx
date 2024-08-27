@@ -2,8 +2,12 @@ import { HomeIcon, Pizza, UtensilsCrossedIcon } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { NavLink } from "./nav-link";
 import { ThemeToggle } from "./theme-toggle";
+import { AccountMenu } from "./account-menu";
+
 
 export function Header() {
+
+
   return (
     <div className="border-b-[2px] border-red-500">
       <div className="flex h-16 items-center gap-6 px-6">
@@ -23,7 +27,7 @@ export function Header() {
         
         <div className="ml-auto flex items-center space-x-2">
           <ThemeToggle />
-          {/* <AccountMenu /> */}
+          <AccountMenu />
         </div>
       </div>
     </div>

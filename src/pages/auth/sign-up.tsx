@@ -1,3 +1,4 @@
+import { RegisterRestaurant } from "@/api/sign-up";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,15 +26,19 @@ export function SignUp() {
   } = useForm<signUpForm>();
   const navigate = useNavigate();
 
-  async function handleRegisteRestaurant(data: signUpForm) {
+  async function handleRegisteRestaurant({
+    restaurantName,
+    managerName,
+    email,
+    phone,
+  }: signUpForm) {
     try {
-      console.log(data);
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await RegisterRestaurant({ restaurantName, managerName, email, phone })
       toast.success("Enviamos um link de autenticação para o seu email",{
         action: {
           label: "Login",
           onClick: () => {
-            navigate('/sign-in');
+            navigate(`/sign-in?email=${email}`);
           },
         }
       });
