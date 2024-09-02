@@ -64,10 +64,23 @@ export function StoreProfile() {
 
     return { cached }
   }
-
   const { mutateAsync: updateProfileFn } = useMutation({
     mutationFn: updateProfile,
+    onMutate: ({ name, description }) => {
+      const { cached } = updateProfileDataOnCache({
+        name,
+        description,
+      })
+
+      return { previousProfile: cached }
+    },
+    onError(_, __, context) {
+      if (context?.previousProfile) {
+        updateProfileDataOnCache(context.previousProfile)
+      }
+    },
   })
+
   
   async function handleUpdateProfile({
     name,
