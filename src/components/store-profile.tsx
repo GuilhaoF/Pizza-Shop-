@@ -29,7 +29,7 @@ const storeProfileSchema = z.object({
 type StoreProfileSchema = z.infer<typeof storeProfileSchema>
 
 export function StoreProfile() {
-  
+
   const queryClient = useQueryClient()
 
   const { data: storeProfile, isLoading: isLoadingStoreProfile } = useQuery({
@@ -103,7 +103,7 @@ export function StoreProfile() {
   }
 
   return (
-    <DialogContent className="sm:max-w-[520px]">
+    <DialogContent className="sm:max-w-[520px]" >
       <DialogHeader>
         <DialogTitle>Perfil da loja</DialogTitle>
         <DialogDescription>

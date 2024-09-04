@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { ArrowRight, Loader2, Search, X } from 'lucide-react'
+import { ArrowRight, Loader2, Search,} from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -12,6 +12,10 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { OrderDetails } from './order-details'
 import { GetOrdersResponse } from '@/api/get-order'
+import { cancelOrder } from '@/api/cancel-order'
+import { approveOrder } from '@/api/approve-order'
+import { deliverOrder } from '@/api/deliver-order'
+import { dispatchOrder } from '@/api/dispatch-order'
 
 
 type OrderStatus =
@@ -39,9 +43,6 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
     const ordersListingCache = queryClient.getQueriesData<GetOrdersResponse>({
       queryKey: ['orders'],
     })
-
-    console.log(ordersListingCache)
-
     ordersListingCache.forEach(([cacheKey, cached]) => {
       if (!cached) {
         return
@@ -65,37 +66,37 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
     toast.success('Pedido alterado com sucesso!')
   }
 
-  // const { mutateAsync: approveOrderFn, isPending: isApprovingOrder } =
-  //   useMutation({
-  //     mutationFn: approveOrder,
-  //     onSuccess: async (_, { orderId }) => {
-  //       updateOrderStatusOnCache(orderId, 'processing')
-  //     },
-  //   })
+  const { mutateAsync: approveOrderFn, isPending: isApprovingOrder } =
+    useMutation({
+      mutationFn: approveOrder,
+      onSuccess: async (_, { orderId }) => {
+        updateOrderStatusOnCache(orderId, 'processing')
+      },
+    })
 
-  // const { mutateAsync: cancelOrderFn, isPending: isCancelingOrder } =
-  //   useMutation({
-  //     mutationFn: cancelOrder,
-  //     onSuccess: async (_, { orderId }) => {
-  //       updateOrderStatusOnCache(orderId, 'canceled')
-  //     },
-  //   })
+  const { mutateAsync: cancelOrderFn, isPending: isCancelingOrder } =
+    useMutation({
+      mutationFn: cancelOrder,
+      onSuccess: async (_, { orderId }) => {
+        updateOrderStatusOnCache(orderId, 'canceled')
+      },
+    })
 
-  // const { mutateAsync: dispatchOrderFn, isPending: isDispatchingOrder } =
-  //   useMutation({
-  //     mutationFn: dispatchOrder,
-  //     onSuccess: async (_, { orderId }) => {
-  //       updateOrderStatusOnCache(orderId, 'delivering')
-  //     },
-  //   })
+  const { mutateAsync: dispatchOrderFn, isPending: isDispatchingOrder } =
+    useMutation({
+      mutationFn: dispatchOrder,
+      onSuccess: async (_, { orderId }) => {
+        updateOrderStatusOnCache(orderId, 'delivering')
+      },
+    })
 
-  // const { mutateAsync: deliverOrderFn, isPending: isDeliveringOrder } =
-  //   useMutation({
-  //     mutationFn: deliverOrder,
-  //     onSuccess: async (_, { orderId }) => {
-  //       updateOrderStatusOnCache(orderId, 'delivered')
-  //     },
-  //   })
+  const { mutateAsync: deliverOrderFn, isPending: isDeliveringOrder } =
+    useMutation({
+      mutationFn: deliverOrder,
+      onSuccess: async (_, { orderId }) => {
+        updateOrderStatusOnCache(orderId, 'delivered')
+      },
+    })
 
   return (
     <TableRow>
@@ -145,15 +146,15 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
           <Button
             variant="outline"
             size="sm"
-            // disabled={isDispatchingOrder}
-            // onClick={() => dispatchOrderFn({ orderId: order.orderId })}
+            disabled={isDispatchingOrder}
+            onClick={() => dispatchOrderFn({ orderId: order.orderId })}
           >
             Em entrega
-            {/* {isDispatchingOrder ? (
+            {isDispatchingOrder ? (
               <Loader2 className="ml-2 h-3 w-3 animate-spin" />
             ) : (
               <ArrowRight className="ml-2 h-3 w-3" />
-            )} */}
+            )}
           </Button>
         )}
 
@@ -161,15 +162,15 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
           <Button
             variant="outline"
             size="sm"
-            // disabled={isDeliveringOrder}
-            // onClick={() => deliverOrderFn({ orderId: order.orderId })}
+            disabled={isDeliveringOrder}
+            onClick={() => deliverOrderFn({ orderId: order.orderId })}
           >
             Entregue
-            {/* {isDeliveringOrder ? (
+            {isDeliveringOrder ? (
               <Loader2 className="ml-2 h-3 w-3 animate-spin" />
             ) : (
               <ArrowRight className="ml-2 h-3 w-3" />
-            )} */}
+            )}
           </Button>
         )}
 
@@ -177,34 +178,34 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
           <Button
             variant="outline"
             size="sm"
-            // disabled={isApprovingOrder}
-            // onClick={() => approveOrderFn({ orderId: order.orderId })}
+            disabled={isApprovingOrder}
+            onClick={() => approveOrderFn({ orderId: order.orderId })}
           >
             Aprovar
-            {/* {isApprovingOrder ? (
+            {isApprovingOrder ? (
               <Loader2 className="ml-2 h-3 w-3 animate-spin" />
             ) : (
               <ArrowRight className="ml-2 h-3 w-3" />
-            )} */}
+            )}
           </Button>
         )}
       </TableCell>
 
       <TableCell>
         <Button
-          // onClick={() => cancelOrderFn({ orderId: order.orderId })}
-          // disabled={
-          //   !['pending', 'processing'].includes(order.status) ||
-          //   isCancelingOrder
-          // }
+          onClick={() => cancelOrderFn({ orderId: order.orderId })}
+          disabled={
+            !['pending', 'processing'].includes(order.status) ||
+            isCancelingOrder
+          }
           variant="ghost"
           size="sm"
         >
-          {/* {isCancelingOrder ? (
+          {isCancelingOrder ? (
             <Loader2 className="mr-2 h-3 w-3 animate-spin" />
           ) : (
             <ArrowRight className="mr-2 h-3 w-3" />
-          )} */}
+          )}
           Cancelar
         </Button>
       </TableCell>

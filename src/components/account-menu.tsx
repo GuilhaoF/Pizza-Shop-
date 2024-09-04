@@ -19,6 +19,7 @@ import {
 import { Skeleton } from './ui/skeleton'
 import { getManagedRestaurant } from '@/api/get-restaurant-managed'
 import { StoreProfile } from './store-profile'
+import { signOut } from '@/api/sign-out'
 
 export function AccountMenu() {
   const navigate = useNavigate()
