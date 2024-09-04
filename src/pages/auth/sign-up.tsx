@@ -1,61 +1,70 @@
-import { RegisterRestaurant } from "@/api/sign-up";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { UserRound } from "lucide-react";
-import { Helmet } from "react-helmet-async";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { twMerge } from "tailwind-merge";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import { twMerge } from 'tailwind-merge'
+import { z } from 'zod'
 
-const signUpForm = z.object({
+import { RegisterRestaurant } from '@/api/register-restaurant'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+
+const signUpSchema = z.object({
   restaurantName: z.string(),
   managerName: z.string(),
-  email: z.string().email(),
   phone: z.string(),
-});
-type signUpForm = z.infer<typeof signUpForm>;
+  email: z.string().email(),
+})
+
+type SignUpSchema = z.infer<typeof signUpSchema>
 
 export function SignUp() {
+  const navigate = useNavigate()
+
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<signUpForm>();
-  const navigate = useNavigate();
+  } = useForm<SignUpSchema>({
+    resolver: zodResolver(signUpSchema),
+  })
+
+  const { mutateAsync: registerRestaurant } = useMutation({
+    mutationFn: RegisterRestaurant,
+  })
 
   async function handleRegisteRestaurant({
     restaurantName,
     managerName,
     email,
     phone,
-  }: signUpForm) {
+  }: SignUpSchema) {
     try {
-      await RegisterRestaurant({ restaurantName, managerName, email, phone })
-      toast.success("Enviamos um link de autenticação para o seu email",{
+      await registerRestaurant({ restaurantName, managerName, email, phone })
+
+      toast.success('Restaurante cadastrado!', {
+        description: '',
         action: {
-          label: "Login",
+          label: 'Login',
           onClick: () => {
-            navigate(`/sign-in?email=${email}`);
+            navigate(`/sign-in?email=${email}`)
           },
-        }
-      });
-    } catch (error) {
-      toast.error("Erro ao cadastrar restaurante");
+        },
+      })
+    } catch (err) {
+      toast.error('Erro ao registrar restaurante!')
     }
   }
 
   return (
     <div className="lg:p-8">
-      <Helmet title="Sign-Up" />
-      <UserRound className="mx-auto h-10 w-10 text-primary" />
       <a
         href="/sign-in"
         className={twMerge(
-          buttonVariants({ variant: "destructive" }),
-          "absolute right-4 top-4 md:right-8 md:top-8",
+          buttonVariants({ variant: 'ghost' }),
+          'absolute right-4 top-4 md:right-8 md:top-8',
         )}
       >
         Fazer login
@@ -81,7 +90,7 @@ export function SignUp() {
                   id="name"
                   type="text"
                   autoCorrect="off"
-                  {...register("restaurantName")}
+                  {...register('restaurantName')}
                 />
               </div>
 
@@ -91,7 +100,7 @@ export function SignUp() {
                   id="managerName"
                   type="text"
                   autoCorrect="off"
-                  {...register("managerName")}
+                  {...register('managerName')}
                 />
               </div>
 
@@ -103,7 +112,7 @@ export function SignUp() {
                   autoCapitalize="none"
                   autoComplete="email"
                   autoCorrect="off"
-                  {...register("email")}
+                  {...register('email')}
                 />
               </div>
 
@@ -113,7 +122,7 @@ export function SignUp() {
                   id="phone"
                   placeholder="(99) 99999-9999"
                   type="tel"
-                  {...register("phone")}
+                  {...register('phone')}
                 />
               </div>
 
@@ -125,14 +134,14 @@ export function SignUp() {
         </div>
 
         <p className="px-6 text-center text-sm leading-relaxed text-muted-foreground">
-          Ao continuar, você concorda com nossos{" "}
+          Ao continuar, você concorda com nossos{' '}
           <a
             href="/terms"
             className="underline underline-offset-4 hover:text-primary"
           >
             Termos de serviço
-          </a>{" "}
-          e{" "}
+          </a>{' '}
+          e{' '}
           <a
             href="/privacy"
             className="underline underline-offset-4 hover:text-primary"
@@ -143,5 +152,5 @@ export function SignUp() {
         </p>
       </div>
     </div>
-  );
+  )
 }

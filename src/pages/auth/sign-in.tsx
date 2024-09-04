@@ -2,6 +2,7 @@ import { signIn } from "@/api/sign-in";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { UserSquareIcon } from "lucide-react";
 import { Helmet } from "react-helmet-async";
@@ -17,14 +18,14 @@ const signInForm = z.object({
 type signInForm = z.infer<typeof signInForm>;
 
 export function SignIn() {
-  const [searchParams] = useSearchParams() // useSearchParams é um hook do React Router que retorna um objeto com os parâmetros da URL
+  const [searchParams] = useSearchParams(); // useSearchParams é um hook do React Router que retorna um objeto com os parâmetros da URL
 
-  
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
   } = useForm<signInForm>({
+    resolver: zodResolver(signInForm),
     defaultValues: {
       email: searchParams.get("email") ?? "", // O valor padrão do campo de email é o valor do parâmetro email da URL
     },
@@ -78,7 +79,13 @@ export function SignIn() {
           >
             <div className="space-y-2">
               <Label htmlFor="email">Seu Email</Label>
-              <Input id="email" type="email" {...register} />
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                autoCorrect="off"
+                {...register("email")}
+              />
             </div>
             <Button disabled={isSubmitting} type="submit">
               {" "}

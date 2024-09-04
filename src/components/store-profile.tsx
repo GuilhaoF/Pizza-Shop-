@@ -3,6 +3,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+
+
+import { updateProfile } from '@/api/update-profile'
+
 import { Button } from './ui/button'
 import {
   DialogClose,
@@ -14,9 +18,8 @@ import {
 } from './ui/dialog'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
-import { getManagedRestaurant, GetManagedRestaurantResponse } from '@/api/get-restaurant-managed'
 import { Textarea } from './ui/textarea'
-import { updateProfile } from '@/api/update-profile'
+import { getManagedRestaurant, GetManagedRestaurantResponse } from '@/api/get-restaurant-managed'
 
 const storeProfileSchema = z.object({
   name: z.string().min(1),
@@ -26,12 +29,13 @@ const storeProfileSchema = z.object({
 type StoreProfileSchema = z.infer<typeof storeProfileSchema>
 
 export function StoreProfile() {
+  
   const queryClient = useQueryClient()
 
   const { data: storeProfile, isLoading: isLoadingStoreProfile } = useQuery({
     queryKey: ['managed-restaurant'],
     queryFn: getManagedRestaurant,
-    staleTime: Infinity, // O staleTime é o tempo que a query pode ficar sem ser atualizada antes de ser considerada "stale" (antiga). O valor Infinity significa que a query nunca será considerada antiga
+    staleTime: Infinity,
   })
 
   const {
@@ -44,7 +48,7 @@ export function StoreProfile() {
       name: storeProfile?.name ?? '',
       description: storeProfile?.description ?? '',
     },
-  }) // O hook useForm do React Hook Form é usado para criar um formulário controlado. O resolver zodResolver é usado para validar os dados do formulário com base no schema storeProfileSchema
+  })
 
   function updateProfileDataOnCache({ name, description }: StoreProfileSchema) {
     const cached = queryClient.getQueryData<GetManagedRestaurantResponse>([
@@ -64,6 +68,7 @@ export function StoreProfile() {
 
     return { cached }
   }
+
   const { mutateAsync: updateProfileFn } = useMutation({
     mutationFn: updateProfile,
     onMutate: ({ name, description }) => {
@@ -81,7 +86,6 @@ export function StoreProfile() {
     },
   })
 
-  
   async function handleUpdateProfile({
     name,
     description,
@@ -91,7 +95,7 @@ export function StoreProfile() {
         name,
         description,
       })
-  
+
       toast.success('Perfil atualizado com sucesso!')
     } catch {
       toast.error('Falha ao atualizar o perfil, tente novamente!')
@@ -150,4 +154,3 @@ export function StoreProfile() {
     </DialogContent>
   )
 }
-

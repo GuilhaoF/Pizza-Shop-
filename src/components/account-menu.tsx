@@ -36,12 +36,12 @@ export function AccountMenu() {
       staleTime: Infinity,
     })
 
-  // const { isPending: isSigningOut, mutateAsync: handleSignOut } = useMutation({
-  //   mutationFn: signOut,
-  //   onSuccess: () => {
-  //     navigate('/sign-in', { replace: true })
-  //   },
-  // })
+  const { isPending: isSigningOut, mutateAsync: handleSignOut } = useMutation({
+    mutationFn: signOut,
+    onSuccess: () => {
+      navigate('/sign-in', { replace: true })
+    },
+  })
 
   return (
     <Dialog>
@@ -86,12 +86,12 @@ export function AccountMenu() {
             <DropdownMenuItem
               asChild
               className="text-rose-500 dark:text-rose-400"
-              // disabled={isSigningOut}
+              disabled={isSigningOut}
             >
-              {/* <button className="w-full" onClick={() => handleSignOut()}>
+              <button className="w-full" onClick={() => handleSignOut()}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Sair</span>
-              </button> */}
+              </button>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
