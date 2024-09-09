@@ -15,6 +15,7 @@ import { z } from "zod";
 import { OrderTableRow } from "./order-table-row";
 import { OrderTableFilters } from "./order-table-filters";
 import { Loader2Icon } from "lucide-react";
+import { OrdersTableSkeleton } from "./order-table-skeleton";
 
 export function Orders() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -79,7 +80,7 @@ export function Orders() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isLoadingOrders && !result && <div>...Carregando</div>}
+                {isLoadingOrders && <OrdersTableSkeleton/>}
 
                 {result &&
                   result.orders.map((order) => {
